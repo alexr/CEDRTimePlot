@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  function dOf(xs) { return function(e) { return xs.some(function(x) { return x === e.d }) } };
+
+  // This version of title function: {0} interpreted as id, {1} as toll field, and {2} as events.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.toll, e.events);
+      return res;
+    }
+  };
+
+  function computeWinY(x,i) { x.y = 1 + 0.25 * i; return x; };
+
+  sampleDrawing(function(cedr) {
+    return [cedr(rawEvents.filter(dOf([1,2])).map(title('e{0} ({1}$)')).concat(hopping(27, 3, 1).map(computeWinY)), 'bottom')];
+  });
+
+  d3.select("body").append("p");
+
+  var result = [
+      { kind: 'event', extend:0, vs:  2, ve:  2, d: 1, toll:  7, events: 'e1' },
+      { kind: 'event', extend:0, vs:  3, ve:  3, d: 1, toll: 11, events: 'e1,e2' },
+      { kind: 'event', extend:0, vs:  4, ve:  4, d: 1, toll: 16, events: 'e1,e2,e4' },
+      { kind: 'event', extend:0, vs:  4, ve:  4, d: 2, toll:  4, events: 'e3' },
+      { kind: 'event', extend:0, vs:  5, ve:  5, d: 1, toll: 16, events: 'e1,e2,e4' },
+      { kind: 'event', extend:0, vs:  5, ve:  5, d: 2, toll:  4, events: 'e3' },
+      { kind: 'event', extend:0, vs:  6, ve:  6, d: 1, toll:  5, events: 'e4' },
+      { kind: 'event', extend:0, vs:  6, ve:  6, d: 2, toll: 10, events: 'e3,e5' },
+      { kind: 'event', extend:0, vs:  7, ve:  7, d: 1, toll:  5, events: 'e4' },
+      { kind: 'event', extend:0, vs:  7, ve:  7, d: 2, toll: 15.5, events: 'e3,e5,e6' },
+      { kind: 'event', extend:0, vs:  8, ve:  8, d: 1, toll: 11, events: 'e4,e7' },
+      { kind: 'event', extend:0, vs:  8, ve:  8, d: 2, toll: 19.5, events: 'e3,e5,e6,e8' },
+      { kind: 'event', extend:0, vs:  9, ve:  9, d: 1, toll: 11, events: 'e4,e7' },
+      { kind: 'event', extend:0, vs:  9, ve:  9, d: 2, toll: 19.5, events: 'e3,e5,e6,e8' },
+      { kind: 'event', extend:0, vs: 10, ve: 10, d: 1, toll: 11, events: 'e4,e7' },
+      { kind: 'event', extend:0, vs: 10, ve: 10, d: 2, toll: 9.5, events: 'e6,e8' }
+    ].map(title('o{0} ({1}$) {{2}}'));
+
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 9]);
+    var rawPartial = rawEvents.filter(function(e) { return e.vs < 9 }).filter(dOf([1, 2]));
+    return [
+      cedr(rawPartial.map(title('e{0} ({1}$)')).concat(hopping(11, 3, 1).map(computeWinY)), 'bottom'),
+      cedr(result)
+    ];
+  }, 100);
+
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 9]);
+    var rawPartial = rawEvents.filter(function(e) { return e.vs < 9 }).filter(dOf([1, 2])).map(title('e{0} ({1}$)'));
+    return [
+      cedr(result    .filter(dOf([1]))),
+      cedr(rawPartial.filter(dOf([1])).concat(hopping(11, 3, 1).map(computeWinY)), 'top'),
+      cedr(rawPartial.filter(dOf([2])).concat(hopping(11, 3, 1).map(computeWinY)), 'bottom'),
+      cedr(result    .filter(dOf([2])))
+    ];
+  }, 100);
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

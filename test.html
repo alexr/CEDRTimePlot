@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  var ofData = function(data, d) {
+    return data.filter(function(x) { return x.d === d; });
+  }
+  var withExtend = function(data, extend) {
+    return data.map(function(x) {
+      var ret = Object.create(x);
+      ret.extend = extend;
+      return ret;
+    });
+  }
+
+  sampleDrawing(function(cedr) {
+    var undefined;
+    return [
+      cedr(ofData(rawPoints, 1).concat(hopping(28, 5, 3)), 'top'),
+      cedr(ofData(rawPoints, 1).concat(hopping(28, 5, 3)), 'bottom'),
+      cedr.extent([0, 28])(ofData(rawEvents, 2)),
+      cedr.extent(undefined)(ofData(rawEvents, 3)),
+      cedr(hopping(28, 5, 3), 'top'),
+      cedr(hopping(28, 5, 3), 'bottom')
+    ];
+  });
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  function dOf(xs) { return function(e) { return xs.some(function(x) { return x === e.d }) } };
+
+  // This version of title function: {0} interpreted as id, {1} as toll field, and {2} as events.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.toll, e.events);
+      return res;
+    }
+  };
+
+  rawEvents = rawEvents
+    .map(function(e) { e.extend = 1; return e; })
+    .filter(dOf([1,2]))
+    .map(title('e{0}'));
+
+  var input1 = rawEvents.filter(dOf([1])),
+      input2 = rawEvents.filter(dOf([2])),
+      input1Win = sliding(input1.map(function(e) { return { vs:e.vs, ve: e.ve + e.extend } })),
+      i1Cnts = [0,1,2,3,1,2,1,2,2,1,0,1,2,1],
+      input1Win = input1Win.map(function(x, i) { x.title = i1Cnts[i] === 0 ? '' : ''+i1Cnts[i]; return x; }),
+      input2Win = sliding(input2.map(function(e) { return { vs:e.vs, ve: e.ve+e.extend } })),
+      i2Cnts = [0,1,2,3,4,2,4,3,2,1,2,1,2,3,2,1],
+      input2Win = input2Win.map(function(x, i) { x.title = i2Cnts[i] === 0 ? '' : ''+i2Cnts[i]; return x; });
+  
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 26]);
+    var result = [
+        { kind: 'event', extend:0, vs:  4, ve:  5, d: 5, events: 'e4 -- e3' },
+        { kind: 'event', extend:0, vs:  8, ve:  9, d: 5, events: 'e4,e7 -- e6,e8' },
+        { kind: 'event', extend:0, vs: 11, ve: 12, d: 5, events: 'e11,e12 -- e9,e10' },
+        { kind: 'event', extend:0, vs: 14, ve: 15, d: 5, events: 'e11 -- e10' },
+        { kind: 'event', extend:0, vs: 22, ve: 23, d: 5, events: 'e15,e17 -- e13,e16' },
+        { kind: 'event', extend:0, vs: 23, ve: 24, d: 5, events: 'e17 -- e16' }
+      ].map(title('o{0} {{2}}'));
+
+    return [
+      cedr(input1.concat(input1Win), 'bottom'),
+      cedr(result),
+      cedr(input2.concat(input2Win), 'top')
+    ];
+  }, 50);
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

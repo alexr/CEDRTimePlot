@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script>
+  <script src="d3.cedr.js"></script>
+</head>
+<body>
+<script>
+  function ofD(x) { return function(e) { return e.d == x } };
+
+  // This version of title function: {0} interpreted as id, and {1} as events field.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.events);
+      return res;
+    }
+  };
+
+  function computeWinY(x,i) { x.y = 1 + 0.25 * i; return x; };
+
+  sampleDrawing(function(cedr) {
+    return [cedr(rawEvents.filter(ofD(1)).map(title('e{0}')).concat(hopping(27, 3, 1).map(computeWinY)), 'bottom')];
+  });
+
+  // counting vehicles processed at some time during...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0,28]);
+    var annotatedWindows = hopping(27, 3, 1).map(function(w, i) {
+      var res;
+      if(i >= 1 && i < 16) {
+        res = Object.create(w);
+        res.title = "o" + i;
+      } else if(i >= 20 && i < 27) {
+        res = Object.create(w);
+        res.title = "o" + (i-4);
+      } else {
+        res = w;
+      }
+      return res;
+    });
+    var result = [
+          { kind: 'event', extend:0, vs:  2, ve:  2, d: 5, cnt: 1, events: 'e1' },
+          { kind: 'event', extend:0, vs:  3, ve:  3, d: 5, cnt: 2, events: 'e1,e2' },
+          { kind: 'event', extend:0, vs:  4, ve:  4, d: 5, cnt: 3, events: 'e1,e2,e3' },
+          { kind: 'event', extend:0, vs:  5, ve:  5, d: 5, cnt: 3, events: 'e1,e2,e3' },
+          { kind: 'event', extend:0, vs:  6, ve:  6, d: 5, cnt: 1, events: 'e3' },
+          { kind: 'event', extend:0, vs:  7, ve:  7, d: 5, cnt: 1, events: 'e3' },
+          { kind: 'event', extend:0, vs:  8, ve:  8, d: 5, cnt: 2, events: 'e3,e4' },
+          { kind: 'event', extend:0, vs:  9, ve:  9, d: 5, cnt: 2, events: 'e3,e4' },
+          { kind: 'event', extend:0, vs: 10, ve: 10, d: 5, cnt: 2, events: 'e3,e4' },
+          { kind: 'event', extend:0, vs: 11, ve: 11, d: 5, cnt: 2, events: 'e4,e5' },
+          { kind: 'event', extend:0, vs: 12, ve: 12, d: 5, cnt: 3, events: 'e4,e5,e6' },
+          { kind: 'event', extend:0, vs: 13, ve: 13, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 14, ve: 14, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 15, ve: 15, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 16, ve: 16, d: 5, cnt: 1, events: 'e5' },
+          { kind: 'event', extend:0, vs: 21, ve: 21, d: 5, cnt: 1, events: 'e7' },
+          { kind: 'event', extend:0, vs: 22, ve: 22, d: 5, cnt: 1, events: 'e7' },
+          { kind: 'event', extend:0, vs: 23, ve: 23, d: 5, cnt: 2, events: 'e7,e8' },
+          { kind: 'event', extend:0, vs: 24, ve: 24, d: 5, cnt: 2, events: 'e7,e8' },
+          { kind: 'event', extend:0, vs: 25, ve: 25, d: 5, cnt: 1, events: 'e8' },
+          { kind: 'event', extend:0, vs: 26, ve: 26, d: 5, cnt: 1, events: 'e8' },
+          { kind: 'event', extend:0, vs: 27, ve: 27, d: 5, cnt: 1, events: 'e8' }
+        ].map(title('o{0} {{1}}'));
+
+    return [
+      cedr(rawEvents.filter(ofD(1)).map(title('e{0}')).concat(annotatedWindows.map(computeWinY)), 'bottom'),
+      cedr.y(function(x,i){return i % 9})(result)
+    ];
+  }, 50);
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

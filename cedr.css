@@ -1,0 +1,31 @@
+﻿.axis path {
+  fill: none;
+  stroke: black;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+.axis line {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+}
+.axis line.tick.minor {
+  stroke-width: 1;
+  stroke: #eee;
+}
+.axis line.tick {
+  stroke-width: 2;
+}
+.axis text {
+	font: 11px verdana;
+}
+.event {
+	stroke-width: 2;
+	shape-rendering: crispEdges;
+	font: 9px verdana;
+}
+.window {
+	stroke-width: 2;
+	stroke: #2ca02c;
+	shape-rendering: crispEdges;
+}

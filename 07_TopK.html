@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  function dOf(xs) { return function(e) { return xs.some(function(x) { return x === e.d }) } };
+
+  // this version of title function: {0} interpreted as id, {1} as toll field, and {2} as events.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.toll, e.events);
+      return res;
+    }
+  };
+
+  var result = [
+      { kind: 'event', extend:0, vs:  1, ve:  2, d: 1, toll:    7, events: 'e1' },
+      { kind: 'event', extend:0, vs:  2, ve:  3, d: 1, toll:   11, events: 'e1,e2' },
+      { kind: 'event', extend:0, vs:  3, ve:  4, d: 1, toll:   16, events: 'e1,e2,e4' },
+      { kind: 'event', extend:0, vs:  3, ve:  5, d: 2, toll:    4, events: 'e3' },
+      { kind: 'event', extend:0, vs:  4, ve:  7, d: 1, toll:    5, events: 'e4' },
+      { kind: 'event', extend:0, vs:  5, ve:  6, d: 2, toll:   10, events: 'e3,e5' },
+      { kind: 'event', extend:0, vs:  6, ve:  7, d: 2, toll: 15.5, events: 'e3,e5,e6' },
+      { kind: 'event', extend:0, vs:  7, ve:  9, d: 1, toll:   11, events: 'e4,e7' },
+      { kind: 'event', extend:0, vs:  7, ve:  8, d: 2, toll: 19.5, events: 'e3,e5,e6,e8' },
+      { kind: 'event', extend:0, vs:  8, ve:  9, d: 2, toll:  9.5, events: 'e6,e8' },
+      { kind: 'event', extend:0, vs:  9, ve: 10, d: 1, toll:    6, events: 'e7' },
+      { kind: 'event', extend:0, vs:  9, ve: 10, d: 2, toll:   20, events: 'e6,e8,e9,e10' },
+      { kind: 'event', extend:0, vs: 10, ve: 11, d: 1, toll:   10, events: 'e7,e11' },
+      { kind: 'event', extend:0, vs: 10, ve: 11, d: 2, toll: 14.5, events: 'e8,e9,e10' },
+      { kind: 'event', extend:0, vs: 11, ve: 14, d: 1, toll:  8.5, events: 'e11,e12' },
+      { kind: 'event', extend:0, vs: 11, ve: 12, d: 2, toll: 10.5, events: 'e9,e10' },
+      { kind: 'event', extend:0, vs: 12, ve: 15, d: 2, toll:    5, events: 'e10' },
+      { kind: 'event', extend:0, vs: 14, ve: 15, d: 1, toll:    4, events: 'e11' },
+      { kind: 'event', extend:0, vs: 15, ve: 17, d: 2, toll: 20.5, events: 'e10,e13' },
+      { kind: 'event', extend:0, vs: 17, ve: 18, d: 2, toll: 15.5, events: 'e13' },
+      { kind: 'event', extend:0, vs: 18, ve: 20, d: 2, toll: 19.5, events: 'e13,e14' },
+      { kind: 'event', extend:0, vs: 20, ve: 22, d: 1, toll:    5, events: 'e15' },
+      { kind: 'event', extend:0, vs: 20, ve: 21, d: 2, toll: 23.5, events: 'e13,e14,e16' },
+      { kind: 'event', extend:0, vs: 21, ve: 23, d: 2, toll: 19.5, events: 'e13,e16' },
+      { kind: 'event', extend:0, vs: 22, ve: 23, d: 1, toll:    9, events: 'e15,e17' },
+      { kind: 'event', extend:0, vs: 23, ve: 26, d: 1, toll:    4, events: 'e17' },
+      { kind: 'event', extend:0, vs: 23, ve: 24, d: 2, toll:    4, events: 'e16' }
+    ].map(title('r{0} ({1}$)'));
+
+    var topRes = [
+      { kind: 'event', extend:0, vs:  3, ve:  3, d: 1, toll:   11, rank: 1 },
+      { kind: 'event', extend:0, vs:  3, ve:  3, d: 1, toll:    7, rank: 2 },
+
+      { kind: 'event', extend:0, vs:  6, ve:  6, d: 1, toll:   16, rank: 1 },
+      { kind: 'event', extend:0, vs:  6, ve:  6, d: 2, toll:   10, rank: 2 },
+
+      { kind: 'event', extend:0, vs:  9, ve:  9, d: 2, toll: 19.5, rank: 1 },
+      { kind: 'event', extend:0, vs:  9, ve:  9, d: 2, toll: 15.5, rank: 2 },
+
+      { kind: 'event', extend:0, vs: 12, ve: 12, d: 2, toll:   20, rank: 1 },
+      { kind: 'event', extend:0, vs: 12, ve: 12, d: 2, toll: 14.5, rank: 2 },
+
+      { kind: 'event', extend:0, vs: 15, ve: 15, d: 1, toll:  8.5, rank: 1 },
+      { kind: 'event', extend:0, vs: 15, ve: 15, d: 2, toll:    5, rank: 2 },
+
+      { kind: 'event', extend:0, vs: 18, ve: 18, d: 2, toll: 20.5, rank: 1 },
+      { kind: 'event', extend:0, vs: 18, ve: 18, d: 2, toll: 19.5, rank: 2 },
+
+      { kind: 'event', extend:0, vs: 21, ve: 21, d: 2, toll: 23.5, rank: 1 },
+      { kind: 'event', extend:0, vs: 21, ve: 21, d: 2, toll: 19.5, rank: 2 },
+
+      { kind: 'event', extend:0, vs: 24, ve: 24, d: 2, toll: 19.5, rank: 1 },
+      { kind: 'event', extend:0, vs: 24, ve: 24, d: 1, toll:    9, rank: 2 },
+
+      { kind: 'event', extend:0, vs: 27, ve: 27, d: 1, toll:    4, rank: 1 }
+    ].map(title('o{0} ({1}$)'));
+
+    function cedrResultY(x, i) { return x.kind === 'event' ? i % 10 : x.y };
+    function cedrTopY(x, i) { return x.kind === 'event' ? 2 - x.rank : x.y }; // 2-rank to put rank==1 on top
+
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 28]);
+    return [
+      cedr.y(cedrResultY)(result.concat(hopping(28, 3), 'bottom')),
+      cedr.y(cedrTopY)(topRes)
+    ];
+  }, 50); // Note: a hacky way to use additional parameter for extra padding for the case when text leeks out of the SVG element
+
+  // This one is for FilterAndProject...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 28]);
+    return [
+      cedr.y(cedrTopY)(topRes),
+      cedr.y(cedrTopY)(topRes.filter(function(x) { return x.d === 1}))
+    ];
+  }, 50);
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

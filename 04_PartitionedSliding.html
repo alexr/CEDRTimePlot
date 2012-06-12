@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  function dOf(xs) { return function(e) { return xs.some(function(x) { return x === e.d }) } };
+
+  // This version of title function: {0} interpreted as id, {1} as toll field, and {2} as events.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.toll, e.events);
+      return res;
+    }
+  };
+
+  rawEvents = rawEvents
+    .map(function(e) { e.extend = 1; return e; })
+    .filter(dOf([1,2]))
+    .map(title('e{0}'));
+  var input1 = rawEvents.filter(dOf([1])),
+      input2 = rawEvents.filter(dOf([2])),
+      input1Win = sliding(input1.map(function(e) { return { vs: e.vs, ve: e.ve + e.extend } })),
+      input2Win = sliding(input2.map(function(e) { return { vs: e.vs, ve: e.ve + e.extend } }));
+  
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 26]);
+    return [
+      cedr(input1.concat(input1Win), 'bottom'),
+      cedr(input2.concat(input2Win), 'top')
+    ];
+  });
+  
+  d3.select("body").append("p");
+
+  var result = [
+          { kind: 'event', extend:0, vs:  1, ve:  2, d: 1, toll:    7, events: 'e1' },
+          { kind: 'event', extend:0, vs:  2, ve:  3, d: 1, toll:   11, events: 'e1,e2' },
+          { kind: 'event', extend:0, vs:  3, ve:  4, d: 1, toll:   16, events: 'e1,e2,e4' },
+          { kind: 'event', extend:0, vs:  3, ve:  5, d: 2, toll:    4, events: 'e3' },
+          { kind: 'event', extend:0, vs:  4, ve:  7, d: 1, toll:    5, events: 'e4' },
+          { kind: 'event', extend:0, vs:  5, ve:  6, d: 2, toll:   10, events: 'e3,e5' },
+          { kind: 'event', extend:0, vs:  6, ve:  7, d: 2, toll: 15.5, events: 'e3,e5,e6' },
+          { kind: 'event', extend:0, vs:  7, ve:  9, d: 1, toll:   11, events: 'e4,e7' },
+          { kind: 'event', extend:0, vs:  7, ve:  8, d: 2, toll: 19.5, events: 'e3,e5,e6,e8' },
+          { kind: 'event', extend:0, vs:  8, ve:  9, d: 2, toll:  9.5, events: 'e6,e8' },
+          { kind: 'event', extend:0, vs:  9, ve: 10, d: 1, toll:    6, events: 'e7' },
+          { kind: 'event', extend:0, vs:  9, ve: 10, d: 2, toll:   20, events: 'e6,e8,e9,e10' },
+          { kind: 'event', extend:0, vs: 10, ve: 11, d: 1, toll:   10, events: 'e7,e11' },
+          { kind: 'event', extend:0, vs: 10, ve: 11, d: 2, toll: 14.5, events: 'e8,e9,e10' },
+          { kind: 'event', extend:0, vs: 11, ve: 14, d: 1, toll:  8.5, events: 'e11,e12' },
+          { kind: 'event', extend:0, vs: 11, ve: 12, d: 2, toll: 10.5, events: 'e9,e10' },
+          { kind: 'event', extend:0, vs: 12, ve: 15, d: 2, toll:    5, events: 'e10' },
+          { kind: 'event', extend:0, vs: 14, ve: 15, d: 1, toll:    4, events: 'e11' },
+          { kind: 'event', extend:0, vs: 15, ve: 17, d: 2, toll: 20.5, events: 'e10,e13' },
+          { kind: 'event', extend:0, vs: 17, ve: 18, d: 2, toll: 15.5, events: 'e13' },
+          { kind: 'event', extend:0, vs: 18, ve: 20, d: 2, toll: 19.5, events: 'e13,e14' },
+          { kind: 'event', extend:0, vs: 20, ve: 22, d: 1, toll:    5, events: 'e15' },
+          { kind: 'event', extend:0, vs: 20, ve: 21, d: 2, toll: 23.5, events: 'e13,e14,e16' },
+          { kind: 'event', extend:0, vs: 21, ve: 23, d: 2, toll: 19.5, events: 'e13,e16' },
+          { kind: 'event', extend:0, vs: 22, ve: 23, d: 1, toll:    9, events: 'e15,e17' },
+          { kind: 'event', extend:0, vs: 23, ve: 26, d: 1, toll:    4, events: 'e17' },
+          { kind: 'event', extend:0, vs: 23, ve: 24, d: 2, toll:    4, events: 'e16' }
+        ].map(title('o{0} ({1}$) {{2}}'));
+
+  // grouped sum over sliding window...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 27]);
+
+    // hack: remember default of cedr.y function,  since it is mutable and need to be restored after change :(
+    var cedrDefaultY = cedr.y();
+
+    return [
+      cedr.y(function(x, i) { return i % 6 })(result.filter(dOf([1]))),
+      cedr.y(cedrDefaultY)(input1.concat(input1Win), 'bottom'),
+      cedr(input2.concat(input2Win), 'top'),
+      cedr.y(function(x, i) { return i % 6 })(result.filter(dOf([2])))
+    ];
+  });
+
+  // grouped sum over sliding window...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 27]);
+
+    // remember deafaut of cedr.y function,  since it is mutable and need to be restored after change :(
+    var cedrDefaultY = cedr.y();
+
+    return [
+      cedr(input1.concat(input1Win), 'top'),
+      cedr.y(function(x, i) { return i % 9  })(result),
+      cedr.y(cedrDefaultY)(input2.concat(input2Win), 'bottom')
+    ];
+  });
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

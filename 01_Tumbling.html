@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  function ofD(x) { return function(e) { return e.d == x } };
+
+  // This version of title function: {0} interpreted as id, and {1} as events field.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.events);
+      return res;
+    }
+  };
+
+  sampleDrawing(function(cedr) {
+    return [cedr(rawEvents.filter(ofD(1)).map(title('e{0}')).concat(hopping(27, 3)), 'bottom')];
+  });
+
+  // counting vehicles processed at some time during...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 29]);
+    return [
+      cedr(rawEvents.filter(ofD(1)).map(title('e{0}')).concat(hopping(29, 3)), 'bottom'),
+      cedr([
+          { kind: 'event', extend:0, vs:  3, ve:  3, d: 5, cnt: 2, events: 'e1,e2' },
+          { kind: 'event', extend:0, vs:  6, ve:  6, d: 5, cnt: 1, events: 'e3' },
+          { kind: 'event', extend:0, vs:  9, ve:  9, d: 5, cnt: 2, events: 'e3,e4' },
+          { kind: 'event', extend:0, vs: 12, ve: 12, d: 5, cnt: 3, events: 'e4,e5,e6' },
+          { kind: 'event', extend:0, vs: 15, ve: 15, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 21, ve: 21, d: 5, cnt: 1, events: 'e7' },
+          { kind: 'event', extend:0, vs: 24, ve: 24, d: 5, cnt: 2, events: 'e7,e8' },
+          { kind: 'event', extend:0, vs: 27, ve: 27, d: 5, cnt: 1, events: 'e8' }
+        ].map(title('o{0} {{1}}')))
+    ];
+  });
+
+  // counting vehicles that arrived at...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 28]);
+    return [
+      cedr(rawEvents.filter(ofD(1)).map(title('e{0}')).concat(hopping(28, 3)), 'bottom'),
+      cedr([
+          { kind: 'event', extend:0, vs:  3, ve:  3, d: 5, cnt: 2, events: 'e1,e2' },
+          { kind: 'event', extend:0, vs:  6, ve:  6, d: 5, cnt: 1, events: 'e3' },
+          { kind: 'event', extend:0, vs:  9, ve:  9, d: 5, cnt: 1, events: 'e4' },
+          { kind: 'event', extend:0, vs: 12, ve: 12, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 21, ve: 21, d: 5, cnt: 1, events: 'e7' },
+          { kind: 'event', extend:0, vs: 24, ve: 24, d: 5, cnt: 1, events: 'e8' }
+        ].map(title('o{0} {{1}}')))
+    ];
+  });
+
+  // counting vehicles that finished processing ...
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 28]);
+    return [
+      cedr(rawEvents.filter(ofD(1)).map(title('e{0}')).concat(hopping(28, 3)), 'bottom'),
+      // converting end to point...
+      cedr([
+          { kind: 'event', extend:0, vs:  6, ve:  6, d: 5, cnt: 2, events: 'e1,e2' },
+          { kind: 'event', extend:0, vs:  9, ve:  9, d: 5, cnt: 1, events: 'e3' },
+          { kind: 'event', extend:0, vs: 12, ve: 12, d: 5, cnt: 1, events: 'e4' },
+          { kind: 'event', extend:0, vs: 15, ve: 15, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 24, ve: 24, d: 5, cnt: 1, events: 'e7' },
+          { kind: 'event', extend:0, vs: 27, ve: 27, d: 5, cnt: 1, events: 'e8' }
+        ].map(title('o{0} {{1}}'))),
+      // converting end to point-chronon...
+      cedr([
+          { kind: 'event', extend:0, vs:  3, ve:  3, d: 5, cnt: 2, events: 'e1,e2' },
+          { kind: 'event', extend:0, vs:  9, ve:  9, d: 5, cnt: 1, events: 'e3' },
+          { kind: 'event', extend:0, vs: 12, ve: 12, d: 5, cnt: 1, events: 'e4' },
+          { kind: 'event', extend:0, vs: 15, ve: 15, d: 5, cnt: 2, events: 'e5,e6' },
+          { kind: 'event', extend:0, vs: 24, ve: 24, d: 5, cnt: 1, events: 'e7' },
+          { kind: 'event', extend:0, vs: 27, ve: 27, d: 5, cnt: 1, events: 'e8' }
+        ].map(title('o{0} {{1}}')))
+    ];
+  });
+</script>
+</body></html>

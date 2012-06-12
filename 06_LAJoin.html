@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html><html><head>
+  <link rel="stylesheet" href="cedr.css">
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.9.2"></script>
+  <script src="data.js"></script> 
+  <script src="d3.cedr.js"></script> 
+</head>
+<body>
+<script>
+  var dOf = function(xs) { return function(e) { return xs.some(function(x) { return x === e.d }) } };
+
+  // This version of title function: {0} interpreted as id, {1} as toll field, and {2} as events.
+  function title(format) {
+    return function(e, i) {
+      var res = Object.create(e);
+      res.title = format.format(i+1, e.toll, e.events);
+      return res;
+    }
+  };
+
+  var ref = rawPoints.filter(dOf([1])).map(title('eR{0}'));
+  var obs = rawPoints.filter(dOf([1])).filter(function(x) { return x.tag.length !== 0; }).map(title('eO{0}'));
+  var alarm = rawPoints.filter(dOf([1])).filter(function(x) { return x.tag.length === 0; }).map(title('eA{0}'));
+
+  sampleDrawing(function(cedr) {
+    cedr.extent([0, 26]);
+    return [
+      cedr(ref),
+      cedr(obs),
+      cedr(alarm.map(function(x) { x.d=5; return x; }))
+    ];
+  });
+</script>
+</body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
